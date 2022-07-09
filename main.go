@@ -25,14 +25,7 @@ func Perform(args Arguments, writer io.Writer) error {
 	if !ok || fileName == "" {
 		return fmt.Errorf("-fileName flag has to be specified")
 	}
-	item, ok := args["item"]
-	if !ok || item == "" {
-		return fmt.Errorf("-item flag has to be specified")
-	}
-	id, ok := args["id"]
-	if !ok || id == "" {
-		return fmt.Errorf("-id flag has to be specified")
-	}
+
 	switch args["operation"] {
 	case "list":
 		users, err := readFile(fileName)
@@ -52,6 +45,10 @@ func Perform(args Arguments, writer io.Writer) error {
 		return nil
 	case "add":
 		user := User{}
+		item, ok := args["item"]
+		if !ok || item == "" {
+			return fmt.Errorf("-item flag has to be specified")
+		}
 		err := json.Unmarshal([]byte(item), &user)
 		if err != nil {
 			return err
@@ -73,6 +70,10 @@ func Perform(args Arguments, writer io.Writer) error {
 		users = append(users, user)
 		return writeFile(users, fileName)
 	case "findById":
+		id, ok := args["id"]
+		if !ok || id == "" {
+			return fmt.Errorf("-id flag has to be specified")
+		}
 		users, err := readFile(fileName)
 		if err != nil {
 			return err
@@ -92,6 +93,10 @@ func Perform(args Arguments, writer io.Writer) error {
 
 		return nil
 	case "remove":
+		id, ok := args["id"]
+		if !ok || id == "" {
+			return fmt.Errorf("-id flag has to be specified")
+		}
 		users, err := readFile(fileName)
 		if err != nil {
 			return err
