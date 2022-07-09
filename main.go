@@ -111,6 +111,7 @@ func Perform(args Arguments, writer io.Writer) error {
 		}
 
 		errorText := fmt.Sprintf("Item with id %s not found", id)
+
 		_, err = writer.Write([]byte(errorText))
 		return err
 	default:
@@ -122,7 +123,6 @@ func readFile(fileName string) ([]User, error) {
 	users := []User{}
 
 	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0755)
-	defer file.Close()
 	if err != nil {
 		return nil, err
 	}
@@ -134,12 +134,12 @@ func readFile(fileName string) ([]User, error) {
 	if err != nil {
 		return nil, err
 	}
+	file.Close()
 	return users, nil
 }
 
 func writeFile(users []User, fileName string) error {
 	file, err := os.OpenFile(fileName, os.O_RDWR|os.O_CREATE, 0755)
-	defer file.Close()
 	if err != nil {
 		return err
 	}
@@ -148,8 +148,10 @@ func writeFile(users []User, fileName string) error {
 	if err != nil {
 		return err
 	}
-
+	file.Truncate(0)
+	file.Seek(0, 0)
 	_, err = file.Write(usersBody)
+	file.Close()
 	return err
 }
 
